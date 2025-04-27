@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  server:
+    image: node:14
+    working_dir: /app
+    volumes:
+      - ./copa-website-cloner/apps/server:/app
+      - /app/node_modules
+    command: npm run start:dev
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DB_TYPE=sqlite
+      - DB_HOST=localhost
+      - DB_PORT=5432
+      - DB_USERNAME=root
+      - DB_PASSWORD=password
+      - DB_NAME=database
+      - OTHER_SERVICE_API_KEY=defaultApiKey
+      - OTHER_SERVICE_API_URL=https://api.example.com
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: database
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
